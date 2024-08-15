@@ -43,8 +43,41 @@ jobs:
       - name: Run Tests
         run: npm test --if-present
 
-  docker:
+  snyk:
     needs: build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+        # Supported Node.js versions
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js environment
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      # Step 3: Install Snyk
+      - name: Install Snyk
+        run: npm install -g snyk
+
+      # Step 4: Authenticate Snyk
+      - name: Authenticate Snyk
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+      # Step 5: Run Snyk security scan
+      - name: Snyk Security Scan
+        run: snyk test --all-projects
+
+  docker:
+    needs: snyk
     runs-on: ubuntu-latest
 
     steps:
