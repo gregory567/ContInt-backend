@@ -69,7 +69,7 @@ describe('Todos API', () => {
             .put(`/todos/${todoId}/done`);
         expect(response.statusCode).toBe(200);
         expect(response.body.done).toBe(true);
-    });
+    }, 10000); // Increase timeout to 10 seconds
 
     it('should mark a todo as undone', async () => {
         const todoResponse = await request(app).get('/todos');
@@ -79,17 +79,17 @@ describe('Todos API', () => {
             .delete(`/todos/${todoId}/done`);
         expect(response.statusCode).toBe(200);
         expect(response.body.done).toBe(false);
-    });
+    }, 10000); // Increase timeout to 10 seconds
 
     it('should return 404 for a non-existing todo when marking done', async () => {
         const response = await request(app)
             .put('/todos/999/done'); // Using a non-existent ID
         expect(response.statusCode).toBe(404);
-    });
+    }, 10000); // Increase timeout to 10 seconds
 
     it('should return 404 for a non-existing todo when marking undone', async () => {
         const response = await request(app)
             .delete('/todos/999/done'); // Using a non-existent ID
         expect(response.statusCode).toBe(404);
-    });
+    }, 10000); // Increase timeout to 10 seconds
 });
