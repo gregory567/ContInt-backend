@@ -1,3 +1,4 @@
+require('dotenv').config({ path: 'env.local' });
 const { Sequelize } = require('sequelize');
 
 const connUrl =
