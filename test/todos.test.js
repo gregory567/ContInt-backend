@@ -13,17 +13,25 @@ jest.mock('../db/db', () => {
         done: false,
     });
 
-    return {
-        models: {
-            todo: TodoMock,
-        },
-        sync: jest.fn(),
+    // Mock findByPk method
+    TodoMock.findByPk = jest.fn().mockImplementation((id) => {
+        if (id === 1) {
+            return Promise.resolve(TodoMock.build({ id: 1, name: 'Test Todo', done: false }));
+        } else {
+            return Promise.resolve(null); // For non-existent todos
+        }
+    });
+
+    dbMock.models = {
+        todo: TodoMock,
     };
+
+    return dbMock;
 });
 
 describe('Todos API', () => {
     beforeAll(async () => {
-        await db.sync(); // Sync database mock before running tests
+        // No need to sync since we are using a mock database
     });
 
     it('should create a new todo', async () => {
