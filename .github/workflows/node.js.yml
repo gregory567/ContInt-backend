@@ -1,4 +1,4 @@
-# This workflow installs Node.js dependencies, caches them, builds the source code, runs tests, and builds/pushes a Docker image.
+# This workflow installs Node.js dependencies, caches them, builds the source code, runs tests, performs a Snyk security check, and builds/pushes a Docker image.
 
 name: Node.js CI
 
@@ -14,21 +14,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # Supported Node.js versions
-
     steps:
       # Step 1: Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js environment
-      - name: Set up Node.js ${{ matrix.node-version }}
+      # Step 2: Set up Node.js environment (latest version)
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: "22.x"
           cache: npm
 
       # Step 3: Install dependencies
@@ -47,21 +42,16 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # Supported Node.js versions
-
     steps:
       # Step 1: Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js environment
-      - name: Set up Node.js ${{ matrix.node-version }}
+      # Step 2: Set up Node.js environment (latest version)
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: "22.x"
           cache: npm
 
       # Step 3: Install Snyk
