@@ -2,9 +2,28 @@ const request = require('supertest');
 const app = require('../app');
 const db = require('../db/db');
 
+// Mock the Sequelize model and methods
+jest.mock('../db/db', () => {
+    const SequelizeMock = require('sequelize-mock');
+    const dbMock = new SequelizeMock();
+
+    const TodoMock = dbMock.define('todo', {
+        id: 1,
+        name: 'Test Todo',
+        done: false,
+    });
+
+    return {
+        models: {
+            todo: TodoMock,
+        },
+        sync: jest.fn(),
+    };
+});
+
 describe('Todos API', () => {
     beforeAll(async () => {
-        await db.sync({ force: true }); // Re-sync database before running tests
+        await db.sync(); // Sync database mock before running tests
     });
 
     it('should create a new todo', async () => {
