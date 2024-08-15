@@ -1,40 +1,65 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+# This workflow installs Node.js dependencies, caches them, builds the source code, runs tests, and builds/pushes a Docker image.
 
 name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        # Supported Node.js versions
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm run test --if-present
+      # Step 1: Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Log in to Docker Hub
-      run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+      # Step 2: Set up Node.js environment
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
 
-    - name: Build Docker Image
-      run: docker build -t gregory789/contint-repository:contint-backend .
+      # Step 3: Install dependencies
+      - name: Install Dependencies
+        run: npm ci
 
-    - name: Push Docker Image
-      run: docker push gregory789/contint-repository:contint-backend
+      # Step 4: Build the source code (if applicable)
+      - name: Build Source Code
+        run: npm run build --if-present
+
+      # Step 5: Run tests
+      - name: Run Tests
+        run: npm test --if-present
+
+  docker:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Log in to Docker Hub
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      # Step 3: Build Docker image
+      - name: Build Docker Image
+        run: docker build -t gregory789/contint-repository:contint-backend .
+
+      # Step 4: Push Docker image to Docker Hub
+      - name: Push Docker Image
+        run: docker push gregory789/contint-repository:contint-backend
