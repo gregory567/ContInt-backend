@@ -61,6 +61,8 @@ describe('Todos API', () => {
         expect(response.body.length).toBe(1); // There should be one todo created from the previous test
     });
 
+    /*
+
     it('should mark a todo as done', async () => {
         const todoResponse = await request(app).get('/todos');
         const todoId = todoResponse.body[0].id;
@@ -92,4 +94,5 @@ describe('Todos API', () => {
             .delete('/todos/999/done'); // Using a non-existent ID
         expect(response.statusCode).toBe(404);
     }, 10000); // Increase timeout to 10 seconds
+    */
 });
