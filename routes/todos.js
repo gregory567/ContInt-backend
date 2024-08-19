@@ -9,7 +9,28 @@ var router = express.Router();
 router.get('/', async (req, res, next) => {
     const todos = await db.models.todo.findAll();
 
-    res.status(200).json(todos);
+    // Check if the feature flag is enabled
+    const isFeatureEnabled = await posthog.isFeatureEnabled('move-unfinished-todos', 'some-user-id-or-distinct-id');
+
+    let sortedTodos = todos;
+
+    if (isFeatureEnabled) {
+        sortedTodos = todos.sort((a, b) => {
+            if (!a.done && b.done) return 1;
+            if (a.done && !b.done) return -1;
+            return new Date(a.createdAt) - new Date(b.createdAt);
+        });
+
+        // Move unfinished todos to the next day if the feature is enabled
+        sortedTodos = sortedTodos.map(todo => {
+            if (!todo.done) {
+                todo.date = new Date(new Date().setDate(new Date().getDate() + 1));
+            }
+            return todo;
+        });
+    }
+
+    res.status(200).json(sortedTodos);
 });
 
 /* Create todos */
@@ -22,12 +43,24 @@ router.post('/',
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const todo = await db.models.todo.create({
-            name: req.body.name
+        let todo = await db.models.todo.create({
+            name: req.body.name,
+            done: false,
+            // Optional: Set the initial date based on the feature toggle
+            date: new Date()
         });
+
+        // Check if the feature flag is enabled
+        const isFeatureEnabled = await posthog.isFeatureEnabled('move-unfinished-todos', 'some-user-id-or-distinct-id');
+
+        if (isFeatureEnabled) {
+            todo.date = new Date(new Date().setDate(new Date().getDate() + 1));
+            todo = await todo.save();
+        }
 
         res.status(201).json(todo);
 });
+
 
 /* Update todos with done */
 router.put('/:id/done',

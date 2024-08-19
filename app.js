@@ -4,6 +4,12 @@ var cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const { PostHog } = require('posthog-node');
+
+const posthog = new PostHog(
+  'phc_xC1fBU65c02AaFCisiKximyPseHTHIUGSRwtQayUXs0',
+  { host: 'https://eu.i.posthog.com' }
+);
 
 var todosRouter = require('./routes/todos');
 

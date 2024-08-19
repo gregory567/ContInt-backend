@@ -18,4 +18,7 @@ for (const model of models) {
     model(db);
 }
 
+// This ensures that any new fields added to models are synced with the database.
+db.sync({ alter: true });
+
 module.exports = db;
