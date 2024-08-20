@@ -80,7 +80,14 @@ jobs:
           distribution: "adopt"
           java-version: "17"
 
-      # Step 3: Run SonarQube Scan
+      # Step 3: Install SonarQube Scanner
+      - name: Install SonarQube Scanner
+        run: |
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
+          unzip sonar-scanner-cli-4.8.0.2856-linux.zip
+          export PATH=$PATH:$PWD/sonar-scanner-4.8.0.2856-linux/bin
+
+      # Step 4: Run SonarQube Scan
       - name: SonarQube Scan
         run: |
           sonar-scanner \
