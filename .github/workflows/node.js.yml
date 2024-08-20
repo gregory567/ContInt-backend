@@ -54,24 +54,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js environment (latest version)
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22.x"
-          cache: npm
-
-      # Step 3: Install Snyk
-      - name: Install Snyk
-        run: npm install -g snyk
-
-      # Step 4: Authenticate Snyk
-      - name: Authenticate Snyk
-        run: snyk auth ${{ secrets.SNYK_TOKEN }}
-
-      # Step 5: Run Snyk security scan
+      # Step 2: Run Snyk Security Scan using Snyk's cloud service
       - name: Snyk Security Scan
-        run: snyk test --all-projects
+        uses: snyk/actions/node@master
+        with:
+          command: test --all-projects
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   docker:
     needs: snyk
