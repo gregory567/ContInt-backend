@@ -86,8 +86,8 @@ jobs:
           sonar-scanner \
           -Dsonar.projectKey=ContInt-backend \
           -Dsonar.sources=. \
-          -Dsonar.host.url=${{ secrets.SONARQUBE_IP }} \
-          -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
   docker:
     needs: sonarqube
