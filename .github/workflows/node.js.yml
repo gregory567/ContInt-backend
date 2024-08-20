@@ -53,7 +53,7 @@ jobs:
       - name: Snyk Security Scan
         uses: snyk/actions/node@master
         with:
-          command: test --all-projects
+          command: test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
