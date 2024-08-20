@@ -5,8 +5,9 @@ const db = require('../db/db');
 var express = require('express')
 var router = express.Router();
 
-/* Read all todos */
+// Read all todos - This route handles GET requests to retrieve all todos.
 router.get('/', async (req, res, next) => {
+    // Fetch all todos from the database using Sequelize's findAll method.
     const todos = await db.models.todo.findAll();
 
     // Check if the feature flag is enabled
