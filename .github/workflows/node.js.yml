@@ -16,6 +16,8 @@ jobs:
       # Step 1: Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full-depth clone for SonarQube analysis
 
       # Step 2: Set up Node.js environment (latest version)
       - name: Set up Node.js
@@ -35,6 +37,13 @@ jobs:
       # Step 5: Run tests
       - name: Run Tests
         run: npm test --if-present
+
+      # Step 6: SonarQube Scan
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
   snyk:
     needs: build
@@ -64,40 +73,8 @@ jobs:
       - name: Snyk Security Scan
         run: snyk test --all-projects
 
-  sonarqube:
-    needs: snyk
-    runs-on: ubuntu-latest
-
-    steps:
-      # Step 1: Checkout the code
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      # Step 2: Set up Java 17 (required for SonarQube)
-      - name: Set up Java 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: "adopt"
-          java-version: "17"
-
-      # Step 3: Install SonarQube Scanner
-      - name: Install SonarQube Scanner
-        run: |
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
-          unzip sonar-scanner-cli-4.8.0.2856-linux.zip
-          export PATH=$PATH:$PWD/sonar-scanner-4.8.0.2856-linux/bin
-
-      # Step 4: Run SonarQube Scan
-      - name: SonarQube Scan
-        run: |
-          sonar-scanner \
-          -Dsonar.projectKey=ContInt-backend \
-          -Dsonar.sources=. \
-          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
   docker:
-    needs: sonarqube
+    needs: snyk
     runs-on: ubuntu-latest
 
     steps:
