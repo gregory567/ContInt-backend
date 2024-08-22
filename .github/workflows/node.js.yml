@@ -38,7 +38,7 @@ jobs:
       - name: Run Tests
         run: npm test --if-present
 
-  security_scan:
+  lint:
     needs: build
     runs-on: ubuntu-latest
 
@@ -64,8 +64,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-  docker:
-    needs: security_scan
+  deliver:
+    needs: lint
     runs-on: ubuntu-latest
 
     steps:
@@ -87,7 +87,7 @@ jobs:
 
   deploy:
     name: Deploy Backend
-    needs: docker
+    needs: deliver
     runs-on: ubuntu-22.04
     steps:
       - name: Executing remote SSH commands using SSH key
