@@ -79,8 +79,22 @@ jobs:
 
       # Step 3: Build Docker image
       - name: Build Docker Image
-        run: docker build -t gregory789/contint-repository:contint-backend .
+        run: docker build -t gregory789/contint-backend-repository:contint-backend-image .
 
       # Step 4: Push Docker image to Docker Hub
       - name: Push Docker Image
-        run: docker push gregory789/contint-repository:contint-backend
+        run: docker push gregory789/contint-backend-repository:contint-backend-image
+
+  deploy:
+    name: Deploy Backend
+    needs: docker
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Executing remote SSH commands using SSH key
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host:
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: sudo ./deploy.sh
