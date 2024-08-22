@@ -10,6 +10,7 @@ on:
 
 jobs:
   build:
+    name: Build and Test Backend
     runs-on: ubuntu-latest
 
     steps:
@@ -39,6 +40,7 @@ jobs:
         run: npm test --if-present
 
   lint:
+    name: Lint Backend
     needs: build
     runs-on: ubuntu-latest
 
@@ -65,6 +67,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
   deliver:
+    name: Deliver Backend
     needs: lint
     runs-on: ubuntu-latest
 
