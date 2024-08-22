@@ -22,3 +22,4 @@ for (const model of models) {
 db.sync({ alter: true });
 
 module.exports = db;
+
