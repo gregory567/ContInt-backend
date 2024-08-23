@@ -12,7 +12,7 @@ const corsOptions = {
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 200
+  //optionsSuccessStatus: 200
 };
 
 const posthog = new PostHog(
