@@ -42,7 +42,7 @@ app.use(function(req, res, next) {
 
 
 //app.use(cors());
-app.use(cors(corsOptions)); //use cors with the corsoptions set above
+//app.use(cors(corsOptions)); //use cors with the corsoptions set above
 
 
 var todosRouter = require('./routes/todos');
