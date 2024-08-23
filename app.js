@@ -20,11 +20,15 @@ const posthog = new PostHog(
   { host: 'https://eu.i.posthog.com' }
 );
 
-var todosRouter = require('./routes/todos');
 
 var app = express();
 //app.use(cors());
 app.use(cors(corsOptions)); //use cors with the corsoptions set above
+
+
+var todosRouter = require('./routes/todos');
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
