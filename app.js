@@ -22,6 +22,25 @@ const posthog = new PostHog(
 
 
 var app = express();
+
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST, OPTIONS');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  
+  // Handle preflight requests
+  if ('OPTIONS' == req.method) {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
+
+
+
+
 //app.use(cors());
 app.use(cors(corsOptions)); //use cors with the corsoptions set above
 
@@ -43,6 +62,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/todos', todosRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
