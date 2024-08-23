@@ -23,7 +23,8 @@ const posthog = new PostHog(
 
 var app = express();
 
-
+// tried to handle preflight requests to handle cors error
+/*
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST, OPTIONS');
@@ -36,13 +37,13 @@ app.use(function(req, res, next) {
     next();
   }
 });
-
+*/
 
 
 
 
 //app.use(cors());
-//app.use(cors(corsOptions)); //use cors with the corsoptions set above
+app.use(cors(corsOptions)); //use cors with the corsoptions set above
 
 
 var todosRouter = require('./routes/todos');
