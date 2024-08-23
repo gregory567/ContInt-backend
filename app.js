@@ -14,8 +14,6 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization']
 };
 
-app.use(cors(corsOptions)); //use cors with the corsoptions set above
-
 const posthog = new PostHog(
   'phc_xC1fBU65c02AaFCisiKximyPseHTHIUGSRwtQayUXs0',
   { host: 'https://eu.i.posthog.com' }
@@ -25,7 +23,7 @@ var todosRouter = require('./routes/todos');
 
 var app = express();
 //app.use(cors());
-app.use(cors(corsOptions));
+app.use(cors(corsOptions)); //use cors with the corsoptions set above
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
