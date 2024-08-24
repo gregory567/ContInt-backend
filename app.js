@@ -7,7 +7,8 @@ var logger = require('morgan');
 const { PostHog } = require('posthog-node');
 
 
-//configure cors 
+//configure cors
+/*
 const corsOptions = {
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -15,11 +16,13 @@ const corsOptions = {
   //credentials: true,
   //optionsSuccessStatus: 200
 };
-
+*/
+/*
 const posthog = new PostHog(
   'phc_xC1fBU65c02AaFCisiKximyPseHTHIUGSRwtQayUXs0',
   { host: 'https://eu.i.posthog.com' }
 );
+*/
 
 
 var app = express();
@@ -30,9 +33,11 @@ app.use((req, res, next) => {
 });
 */
 
-//app.use(cors());
-app.use(cors(corsOptions)); //use cors with the corsoptions set above
-app.options('*', cors(corsOptions)); // handle preflight options request
+app.use(cors());
+//app.use(cors(corsOptions)); //use cors with the corsoptions set above
+//app.options('*', cors(corsOptions)); // handle preflight options request
+
+
 
 var todosRouter = require('./routes/todos');
 
