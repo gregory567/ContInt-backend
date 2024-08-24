@@ -8,7 +8,7 @@ var logger = require('morgan');
 
 
 //configure cors
-
+/*
 const corsOptions = {
   origin: '*',
   //origin: '*,http://10.0.1.20, http://34.228.142.201/',
@@ -17,6 +17,7 @@ const corsOptions = {
   //credentials: true,
   //optionsSuccessStatus: 200
 };
+*/
 
 
 /*
@@ -35,9 +36,9 @@ app.use((req, res, next) => {
 });
 */
 
-//app.use(cors());
-app.use(cors(corsOptions)); //use cors with the corsoptions set above
-app.options('*', cors(corsOptions)); // handle preflight options request
+app.use(cors());
+//app.use(cors(corsOptions)); //use cors with the corsoptions set above
+//app.options('*', cors(corsOptions)); // handle preflight options request
 
 
 
