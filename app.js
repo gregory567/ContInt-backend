@@ -9,7 +9,7 @@ const { PostHog } = require('posthog-node');
 
 //configure cors 
 const corsOptions = {
-  origin: '54.205.190.13',
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   //credentials: true,
@@ -23,6 +23,11 @@ const posthog = new PostHog(
 
 
 var app = express();
+//logging
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
 
 //app.use(cors());
 app.use(cors(corsOptions)); //use cors with the corsoptions set above
