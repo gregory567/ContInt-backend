@@ -9,9 +9,10 @@ const { PostHog } = require('posthog-node');
 
 //configure cors 
 const corsOptions = {
-  origin: '*',
+  origin: '54.205.190.13',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  //credentials: true,
   //optionsSuccessStatus: 200
 };
 
