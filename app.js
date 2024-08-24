@@ -8,7 +8,7 @@ const { PostHog } = require('posthog-node');
 
 
 //configure cors
-
+/*
 const corsOptions = {
   origin: 'http://10.0.1.20, http://34.228.142.201/',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -16,6 +16,7 @@ const corsOptions = {
   credentials: true,
   //optionsSuccessStatus: 200
 };
+*/
 
 /*
 const posthog = new PostHog(
@@ -33,9 +34,9 @@ app.use((req, res, next) => {
 });
 */
 
-//app.use(cors());
-app.use(cors(corsOptions)); //use cors with the corsoptions set above
-app.options('*', cors(corsOptions)); // handle preflight options request
+app.use(cors());
+//app.use(cors(corsOptions)); //use cors with the corsoptions set above
+//app.options('*', cors(corsOptions)); // handle preflight options request
 
 
 
