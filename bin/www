@@ -115,6 +115,7 @@ function startServer() {
         : 'port ' + addr.port;
     debug('Listening on ' + bind);
     console.log('Listening on ' + bind);
+    console.log('TESTIN YOU SHOULD SEE THIS');
   }
 }
 
