@@ -26,7 +26,7 @@ var app = express();
 
 //app.use(cors());
 app.use(cors(corsOptions)); //use cors with the corsoptions set above
-
+app.options('*', cors(corsOptions)); // handle preflight options request
 
 var todosRouter = require('./routes/todos');
 
