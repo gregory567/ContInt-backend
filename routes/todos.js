@@ -19,9 +19,9 @@ function getDistinctIdFromCookies(req) {
 
 // Helper function to handle todos sorting and date updating
 async function processTodos(todos, distinctId) {
-    const isFeatureEnabled = await posthog.isFeatureEnabled('move-unfinished-todos', distinctId);
+    //const isFeatureEnabled = await posthog.isFeatureEnabled('move-unfinished-todos', distinctId);
 
-    if (isFeatureEnabled) {
+    //if (isFeatureEnabled) {
         // Sort and update todos based on the feature flag
         return todos
             .sort((a, b) => {
@@ -35,7 +35,7 @@ async function processTodos(todos, distinctId) {
                 }
                 return todo;
             });
-    }
+    //}
 
     return todos;
 }
@@ -77,12 +77,12 @@ router.post('/',
             const distinctId = getDistinctIdFromCookies(req);
 
             if (distinctId) {
-                const isFeatureEnabled = await posthog.isFeatureEnabled('move-unfinished-todos', distinctId);
+                //const isFeatureEnabled = await posthog.isFeatureEnabled('move-unfinished-todos', distinctId);
 
-                if (isFeatureEnabled) {
+                //if (isFeatureEnabled) {
                     todo.date = new Date(new Date().setDate(new Date().getDate() + 1));
                     todo = await todo.save();
-                }
+                //}
             }
 
             res.status(201).json(todo);
