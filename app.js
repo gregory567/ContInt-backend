@@ -9,6 +9,7 @@ var todosRouter = require('./routes/todos');
 
 var app = express();
 app.use(cors());
+console.log("WE ARE ON THE SERVER");
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
