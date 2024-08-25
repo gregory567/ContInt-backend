@@ -9,7 +9,6 @@ var todosRouter = require('./routes/todos');
 
 var app = express();
 app.use(cors());
-console.log("WE ARE ON THE SERVER!");
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -48,7 +47,7 @@ var logger = require('morgan');
 
 const corsOptions = {
   origin: '*',
-  //origin: '*,http://10.0.1.20, http://34.228.142.201/',
+  //origin: 'http://44.219.67.143/',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
   //credentials: true,
