@@ -8,25 +8,12 @@ var logger = require('morgan');
 var todosRouter = require('./routes/todos');
 
 var app = express();
+app.use(cors());
+console.log("WE ARE ON THE SERVER!");
 
-// CORS configuration
-const corsOptions = {
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
-  allowedHeaders: ['Content-Type', 'Authorization'], 
-  credentials: true
-};
-
-app.use(cors(corsOptions));
-
-// Enable preflight (OPTIONS) requests for all routes
-app.options('*', cors(corsOptions));
-
-// Referrer-Policy header
-app.use((req, res, next) => {
-  res.header("Referrer-Policy", "no-referrer");
-  next();
-});
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -34,33 +21,19 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Log each request for debugging purposes
-app.use((req, res, next) => {
-  console.log(`Received ${req.method} request for ${req.url}`);
-  next();
-});
-
-
 app.use('/todos', todosRouter);
 
-// Catch 404 and forward to error handler
+// catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// Error handler
+// error handler
 app.use(function(err, req, res, next) {
-  console.error(err.stack);
-  // Respond with the error status and message
-  res.status(err.status || 500);
-  res.json({
-    message: err.message,
-    error: req.app.get('env') === 'development' ? err : {}
-  });
+  next(createError(err.status || 500));
 });
 
 module.exports = app;
-
 
 /*var createError = require('http-errors');
 var express = require('express');
