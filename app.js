@@ -14,14 +14,7 @@ const posthog = new PostHog(
 var todosRouter = require('./routes/todos');
 
 var app = express();
-const corsOptions = {
-  origin: '*',  // Allow requests only from your frontend's origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Allow these HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],  // Allow these headers
-  credentials: true  // Allow credentials if you are using them (e.g., cookies, authentication)
-};
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // Handle preflight requests
+app.use(cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
