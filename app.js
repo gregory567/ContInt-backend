@@ -14,7 +14,10 @@ const posthog = new PostHog(
 );
 
 var app = express();
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  credentials: true
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
