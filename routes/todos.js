@@ -205,12 +205,12 @@ var router = express.Router();
 
 // Helper function to handle todos sorting and date updating
 async function processTodos(todos) {
-    // Sort and update todos based on the requirement
+    // Sort and update todos based only on whether they are done or not
     return todos
         .sort((a, b) => {
             if (!a.done && b.done) return 1;
             if (a.done && !b.done) return -1;
-            return new Date(a.createdAt) - new Date(b.createdAt);
+            return 0; // Keep the original order for todos with the same done status
         })
         .map(todo => {
             if (!todo.done) {
