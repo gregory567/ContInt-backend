@@ -74,8 +74,10 @@ var router = express.Router();
 // Helper function to extract distinctId from cookies
 function getDistinctIdFromCookies(req) {
     try {
+        console.log ("inside getDistinctIdFromCookies function")
         let cookies = req.cookies['ph_phc_xC1fBU65c02AaFCisiKximyPseHTHIUGSRwtQayUXs0_posthog'];
         if (cookies) {
+            console.log ("inside if statement in getDistinctIdFromCookies function")
             const distinctId = JSON.parse(cookies)['distinct_id'];
             return distinctId;
         }
@@ -87,10 +89,13 @@ function getDistinctIdFromCookies(req) {
 
 // Helper function to handle todos sorting and date updating
 async function processTodos(todos, distinctId) {
+    console.log ("inside processTodos function")
     const isFeatureEnabled = await posthog.isFeatureEnabled('move-unfinished-todos', distinctId);
 
     if (isFeatureEnabled) {
         // Sort and update todos based on the feature flag
+        console.log ("inside if statement processTodos function")
+       
         return todos
             .sort((a, b) => {
                 if (!a.done && b.done) return 1;
