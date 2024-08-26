@@ -4,6 +4,12 @@ var cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const { PostHog } = require('posthog-node');
+
+const posthog = new PostHog(
+  'phc_xC1fBU65c02AaFCisiKximyPseHTHIUGSRwtQayUXs0',
+  { host: 'https://eu.i.posthog.com' }
+);
 
 var todosRouter = require('./routes/todos');
 
@@ -12,7 +18,9 @@ app.use(cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+// jade or pug
+// app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
