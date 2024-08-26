@@ -15,7 +15,7 @@ const posthog = new PostHog(
 
 var app = express();
 app.use(cors({
-  origin: '44.219.67.143, 10.0.1.20',
+  origin: 'http://34.193.142.100:3000/todos',
   credentials: true
 }));
 
