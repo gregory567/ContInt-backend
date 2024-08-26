@@ -73,6 +73,7 @@ var router = express.Router();
 
 // Helper function to extract distinctId from cookies
 function getDistinctIdFromCookies(req) {
+    console.log("All cookies:", req.cookies);
     try {
         console.log ("inside getDistinctIdFromCookies function")
         let cookies = req.cookies['ph_phc_xC1fBU65c02AaFCisiKximyPseHTHIUGSRwtQayUXs0_posthog'];
