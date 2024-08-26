@@ -76,9 +76,11 @@ const posthog = new PostHog(
 
 // Helper function to extract distinctId from cookies
 function getDistinctIdFromCookies(req) {
+    console.log("All cookies:", req.cookies);
     try {
         const cookies = req.cookies['ph_phc_xC1fBU65c02AaFCisiKximyPseHTHIUGSRwtQayUXs0_posthog'];
         if (cookies) {
+             console.log("inside getDistinctIdFromCookies if statement");
             const distinctId = JSON.parse(cookies)['distinct_id'];
             return distinctId;
         }
@@ -92,6 +94,7 @@ function getDistinctIdFromCookies(req) {
 async function processTodos(todos, distinctId) {
     const isFeatureEnabled = await posthog.isFeatureEnabled('move-unfinished-todos', distinctId);
     if (isFeatureEnabled) {
+        console.log("inside processTodos if statement");
         return todos
             .sort((a, b) => {
                 if (!a.done && b.done) return 1;
