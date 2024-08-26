@@ -113,6 +113,7 @@ async function processTodos(todos, distinctId) {
 
 // Read all todos
 router.get('/', async (req, res, next) => {
+    
     try {
         const todos = await db.models.todo.findAll();
         const distinctId = getDistinctIdFromCookies(req);
