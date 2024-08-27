@@ -90,6 +90,35 @@ function getDistinctIdFromReqHeader(req) {
     return null;
 }
 
+
+
+async function processTodos(todos, distinctId) {
+    const isFeatureEnabled = await posthog.isFeatureEnabled('move-unfinished-todos', distinctId);
+
+    console.log("Feature flag enabled:", isFeatureEnabled);
+
+    if (isFeatureEnabled) {
+        return todos
+            .sort((a, b) => {
+                // Unfinished todos to the top
+                if (!a.done && b.done) return -1;
+                if (a.done && !b.done) return 1;
+
+                // Sort by date
+                return new Date(a.createdAt) - new Date(b.createdAt);
+            })
+            .map(todo => {
+                // Update date for unfinished todos
+                if (!todo.done) {
+                    todo.date = new Date(new Date().setDate(new Date().getDate() + 1));
+                }
+                return todo;
+            });
+    }
+
+    return todos;
+}
+/*
 // Helper function to handle todos sorting and date updating
 async function processTodos(todos, distinctId) {
     console.log("inside processTodos function");
@@ -113,6 +142,7 @@ async function processTodos(todos, distinctId) {
     }
     return todos;
 }
+    */
 
 // Read all todos
 router.get('/', async (req, res, next) => {
