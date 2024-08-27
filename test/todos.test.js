@@ -209,4 +209,40 @@ describe('Todos API', () => {
         expect(res.headers['access-control-allow-origin']).toBeUndefined();
     });
 
+
+
+    test('should initialize PostHog with correct API key and host', () => {
+        const mockPostHog = jest.fn();
+        jest.mock('posthog-node', () => {
+            return {
+                PostHog: mockPostHog
+            };
+        });
+
+        // Reload the app module to apply the mock
+        delete require.cache[require.resolve('../app')];
+        require('../app');
+
+        expect(mockPostHog).toHaveBeenCalledWith(
+            'phc_xC1fBU65c02AaFCisiKximyPseHTHIUGSRwtQayUXs0',
+            { host: 'https://eu.i.posthog.com' }
+        );
+    });
+
+
+    test('should return 404 for undefined routes', async () => {
+        const res = await request(app).get('/undefined-route');
+        expect(res.statusCode).toEqual(404);
+    });
+
+
+    test('should parse cookies correctly', async () => {
+        const res = await request(app)
+            .get('/todos')
+            .set('Cookie', 'test_cookie=test_value');
+
+        expect(res.statusCode).toEqual(200);
+        expect(res.headers['set-cookie']).toBeUndefined(); // Assuming no new cookies are set in this route
+    });
+
 });
