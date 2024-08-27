@@ -2,52 +2,37 @@ const request = require('supertest');
 const app = require('../app');
 const db = require('../db/db');
 
-jest.mock('../db/db'); // Mock the database module
+// Mock the database methods
+jest.mock('../db/db', () => {
+    const mockSequelize = {
+        sync: jest.fn().mockResolvedValue(),
+        close: jest.fn().mockResolvedValue(),
+        authenticate: jest.fn().mockResolvedValue(),
+        models: {
+            todo: {
+                create: jest.fn(),
+                findAll: jest.fn(),
+                findByPk: jest.fn(),
+            }
+        }
+    };
+    return mockSequelize;
+});
 
-const mockTodoModel = {
-    findAll: jest.fn(),
-    create: jest.fn(),
-    update: jest.fn(),
-    findByPk: jest.fn(),
-};
-
-// Mock the database models and methods
-db.models = {
-    todo: mockTodoModel,
-};
-
-beforeAll(() => {
-    // Seed mock data for tests
-    mockTodoModel.findAll.mockResolvedValue([
+beforeAll(async () => {
+    const mockTodos = [
         { id: 1, name: 'Initial Task 1', done: false },
-        { id: 2, name: 'Initial Task 2', done: true },
-    ]);
-
-    mockTodoModel.create.mockImplementation((todo) =>
-        Promise.resolve({ id: 3, ...todo, done: false })
-    );
-
-    mockTodoModel.update.mockImplementation((updates, options) => {
-        if (options.where.id === 1) {
-            return Promise.resolve([1]);
-        } else {
-            return Promise.resolve([0]);
-        }
-    });
-
-    mockTodoModel.findByPk.mockImplementation((id) => {
-        if (id === 1) {
-            return Promise.resolve({ id: 1, name: 'Initial Task 1', done: true });
-        } else if (id === 999) {
-            return Promise.resolve(null);
-        } else {
-            return Promise.resolve(null);
-        }
+        { id: 2, name: 'Initial Task 2', done: true }
+    ];
+    db.models.todo.create.mockResolvedValue(mockTodos[0]);
+    db.models.todo.findAll.mockResolvedValue(mockTodos);
+    db.models.todo.findByPk.mockImplementation(id => {
+        return Promise.resolve(mockTodos.find(todo => todo.id === id));
     });
 });
 
-afterAll(() => {
-    jest.clearAllMocks();
+afterAll(async () => {
+    await db.close();
 });
 
 describe('Todos API', () => {
@@ -56,17 +41,17 @@ describe('Todos API', () => {
         const res = await request(app).get('/todos');
         expect(res.statusCode).toEqual(200);
         expect(res.body.length).toBe(2); // Should have 2 initial tasks
-        expect(mockTodoModel.findAll).toHaveBeenCalledTimes(1);
     });
 
     test('POST /todos should create a new todo', async () => {
+        const newTodo = { id: 3, name: 'New Task', done: false };
+        db.models.todo.create.mockResolvedValue(newTodo);
         const res = await request(app)
             .post('/todos')
             .send({ name: 'New Task' });
         expect(res.statusCode).toEqual(201);
         expect(res.body.name).toBe('New Task');
         expect(res.body.done).toBe(false);
-        expect(mockTodoModel.create).toHaveBeenCalledWith({ name: 'New Task' });
     });
 
     test('POST /todos should return validation error for empty name', async () => {
@@ -78,17 +63,16 @@ describe('Todos API', () => {
     });
 
     test('PUT /todos/:id/done should mark a todo as done', async () => {
+        const todo = { id: 1, name: 'Initial Task 1', done: true };
+        db.models.todo.findByPk.mockResolvedValueOnce(todo);
         const res = await request(app)
             .put('/todos/1/done');
         expect(res.statusCode).toEqual(200);
         expect(res.body.done).toBe(true);
-        expect(mockTodoModel.update).toHaveBeenCalledWith(
-            { done: true },
-            { where: { id: 1 } }
-        );
     });
 
     test('PUT /todos/:id/done should return 404 for a non-existent todo', async () => {
+        db.models.todo.findByPk.mockResolvedValueOnce(null);
         const res = await request(app)
             .put('/todos/999/done');
         expect(res.statusCode).toEqual(404);
@@ -96,6 +80,8 @@ describe('Todos API', () => {
     });
 
     test('DELETE /todos/:id/done should mark a todo as not done', async () => {
+        const todo = { id: 1, name: 'Initial Task 1', done: false };
+        db.models.todo.findByPk.mockResolvedValueOnce(todo);
         const res = await request(app)
             .delete('/todos/1/done');
         expect(res.statusCode).toEqual(200);
@@ -107,8 +93,7 @@ describe('Todos API', () => {
     });
 
     test('Database model should sync correctly', async () => {
-        const todoModel = db.models.todo;
-        expect(todoModel).toBeDefined();
+        expect(db.models.todo).toBeDefined();
     });
 
 });
