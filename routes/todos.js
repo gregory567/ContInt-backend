@@ -117,13 +117,13 @@ router.get('/', async (req, res, next) => {
     
     try {
         const todos = await db.models.todo.findAll();
-        const distinctId = getDistinctIdFromCookies(req);
-        if (distinctId) {
+       // const distinctId = getDistinctIdFromCookies(req);
+        //if (distinctId) {
             const sortedTodos = await processTodos(todos, distinctId);
             return res.status(200).json(sortedTodos);
-        } else {
-            return res.status(200).json(todos);
-        }
+        //} else {
+           // return res.status(200).json(todos);
+        //}
     } catch (error) {
         next(error);
     }
@@ -147,13 +147,13 @@ router.post('/',
             });
 
             const distinctId = getDistinctIdFromCookies(req);
-            if (distinctId) {
-                const isFeatureEnabled = await posthog.isFeatureEnabled('move-unfinished-todos', distinctId);
-                if (isFeatureEnabled) {
+           // if (distinctId) {
+             //   const isFeatureEnabled = await posthog.isFeatureEnabled('move-unfinished-todos', distinctId);
+                //if (isFeatureEnabled) {
                     todo.date = new Date(new Date().setDate(new Date().getDate() + 1));
                     todo = await todo.save();
-                }
-            }
+              //  }
+            //}
             res.status(201).json(todo);
         } catch (error) {
             next(error);
