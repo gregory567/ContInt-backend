@@ -2,19 +2,53 @@ const request = require('supertest');
 const app = require('../app');
 const db = require('../db/db');
 
-// Seed some data before running tests
-beforeAll(async () => {
-    await db.sync({ force: true }); // Resyncs the DB
-    await db.models.todo.create({ name: 'Initial Task 1', done: false });
-    await db.models.todo.create({ name: 'Initial Task 2', done: true });
+jest.mock('../db/db'); // Mock the database module
+
+const mockTodoModel = {
+    findAll: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    findByPk: jest.fn(),
+};
+
+// Mock the database models and methods
+db.models = {
+    todo: mockTodoModel,
+};
+
+beforeAll(() => {
+    // Seed mock data for tests
+    mockTodoModel.findAll.mockResolvedValue([
+        { id: 1, name: 'Initial Task 1', done: false },
+        { id: 2, name: 'Initial Task 2', done: true },
+    ]);
+
+    mockTodoModel.create.mockImplementation((todo) =>
+        Promise.resolve({ id: 3, ...todo, done: false })
+    );
+
+    mockTodoModel.update.mockImplementation((updates, options) => {
+        if (options.where.id === 1) {
+            return Promise.resolve([1]);
+        } else {
+            return Promise.resolve([0]);
+        }
+    });
+
+    mockTodoModel.findByPk.mockImplementation((id) => {
+        if (id === 1) {
+            return Promise.resolve({ id: 1, name: 'Initial Task 1', done: true });
+        } else if (id === 999) {
+            return Promise.resolve(null);
+        } else {
+            return Promise.resolve(null);
+        }
+    });
 });
 
-// Clean up after tests
-afterAll(async () => {
-    await db.close();
+afterAll(() => {
+    jest.clearAllMocks();
 });
-
-
 
 describe('Todos API', () => {
 
@@ -22,6 +56,7 @@ describe('Todos API', () => {
         const res = await request(app).get('/todos');
         expect(res.statusCode).toEqual(200);
         expect(res.body.length).toBe(2); // Should have 2 initial tasks
+        expect(mockTodoModel.findAll).toHaveBeenCalledTimes(1);
     });
 
     test('POST /todos should create a new todo', async () => {
@@ -31,6 +66,7 @@ describe('Todos API', () => {
         expect(res.statusCode).toEqual(201);
         expect(res.body.name).toBe('New Task');
         expect(res.body.done).toBe(false);
+        expect(mockTodoModel.create).toHaveBeenCalledWith({ name: 'New Task' });
     });
 
     test('POST /todos should return validation error for empty name', async () => {
@@ -46,6 +82,10 @@ describe('Todos API', () => {
             .put('/todos/1/done');
         expect(res.statusCode).toEqual(200);
         expect(res.body.done).toBe(true);
+        expect(mockTodoModel.update).toHaveBeenCalledWith(
+            { done: true },
+            { where: { id: 1 } }
+        );
     });
 
     test('PUT /todos/:id/done should return 404 for a non-existent todo', async () => {
