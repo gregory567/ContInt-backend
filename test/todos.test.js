@@ -2,102 +2,73 @@ const request = require('supertest');
 const app = require('../app');
 const db = require('../db/db');
 
-/*
-// Mock the Sequelize model and methods
-jest.mock('../db/db', () => {
-    const SequelizeMock = require('sequelize-mock');
-    const dbMock = new SequelizeMock();
-
-    const TodoMock = dbMock.define('todo', {
-        id: 1,
-        name: 'Test Todo',
-        done: false,
-    });
-
-    // Mock findByPk method
-    TodoMock.findByPk = jest.fn().mockImplementation((id) => {
-        if (id === 1) {
-            return Promise.resolve(TodoMock.build({ id: 1, name: 'Test Todo', done: false }));
-        } else {
-            return Promise.resolve(null); // For non-existent todos
-        }
-    });
-
-    dbMock.models = {
-        todo: TodoMock,
-    };
-
-    return dbMock;
+// Seed some data before running tests
+beforeAll(async () => {
+    await db.sync({ force: true }); // Resyncs the DB
+    await db.models.todo.create({ name: 'Initial Task 1', done: false });
+    await db.models.todo.create({ name: 'Initial Task 2', done: true });
 });
+
+// Clean up after tests
+afterAll(async () => {
+    await db.close();
+});
+
+
 
 describe('Todos API', () => {
-    beforeAll(async () => {
-        // No need to sync since we are using a mock database
+
+    test('GET /todos should return all todos', async () => {
+        const res = await request(app).get('/todos');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.length).toBe(2); // Should have 2 initial tasks
     });
 
-    it('should create a new todo', async () => {
-        const response = await request(app)
+    test('POST /todos should create a new todo', async () => {
+        const res = await request(app)
             .post('/todos')
-            .send({
-                name: 'Test Todo'
-            });
-        expect(response.statusCode).toBe(201);
-        expect(response.body.name).toBe('Test Todo');
-        expect(response.body.done).toBe(false);
+            .send({ name: 'New Task' });
+        expect(res.statusCode).toEqual(201);
+        expect(res.body.name).toBe('New Task');
+        expect(res.body.done).toBe(false);
     });
 
-    it('should not create a todo with an empty name', async () => {
-        const response = await request(app)
+    test('POST /todos should return validation error for empty name', async () => {
+        const res = await request(app)
             .post('/todos')
-            .send({
-                name: ''
-            });
-        expect(response.statusCode).toBe(400);
-        expect(response.body.errors[0].msg).toBe('Invalid value');
+            .send({ name: '' });
+        expect(res.statusCode).toEqual(400);
+        expect(res.body.errors[0].msg).toBe('Invalid value');
     });
 
-    it('should get all todos', async () => {
-        const response = await request(app).get('/todos');
-        expect(response.statusCode).toBe(200);
-        expect(response.body.length).toBe(1); // There should be one todo created from the previous test
+    test('PUT /todos/:id/done should mark a todo as done', async () => {
+        const res = await request(app)
+            .put('/todos/1/done');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.done).toBe(true);
     });
 
+    test('PUT /todos/:id/done should return 404 for a non-existent todo', async () => {
+        const res = await request(app)
+            .put('/todos/999/done');
+        expect(res.statusCode).toEqual(404);
+        expect(res.text).toBe('Todo not found');
+    });
 
+    test('DELETE /todos/:id/done should mark a todo as not done', async () => {
+        const res = await request(app)
+            .delete('/todos/1/done');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.done).toBe(false);
+    });
 
-    
+    test('Database connection should be established', async () => {
+        await expect(db.authenticate()).resolves.not.toThrow();
+    });
 
-    it('should mark a todo as done', async () => {
-        const todoResponse = await request(app).get('/todos');
-        const todoId = todoResponse.body[0].id;
+    test('Database model should sync correctly', async () => {
+        const todoModel = db.models.todo;
+        expect(todoModel).toBeDefined();
+    });
 
-        const response = await request(app)
-            .put(`/todos/${todoId}/done`);
-        expect(response.statusCode).toBe(200);
-        expect(response.body.done).toBe(true);
-    }, 10000); // Increase timeout to 10 seconds
-
-    it('should mark a todo as undone', async () => {
-        const todoResponse = await request(app).get('/todos');
-        const todoId = todoResponse.body[0].id;
-
-        const response = await request(app)
-            .delete(`/todos/${todoId}/done`);
-        expect(response.statusCode).toBe(200);
-        expect(response.body.done).toBe(false);
-    }, 10000); // Increase timeout to 10 seconds
-
-    it('should return 404 for a non-existing todo when marking done', async () => {
-        const response = await request(app)
-            .put('/todos/999/done'); // Using a non-existent ID
-        expect(response.statusCode).toBe(404);
-    }, 10000); // Increase timeout to 10 seconds
-
-    it('should return 404 for a non-existing todo when marking undone', async () => {
-        const response = await request(app)
-            .delete('/todos/999/done'); // Using a non-existent ID
-        expect(response.statusCode).toBe(404);
-    }, 10000); // Increase timeout to 10 seconds
-    
 });
-
-*/
