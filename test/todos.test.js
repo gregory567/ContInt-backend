@@ -13,6 +13,7 @@ jest.mock('../db/db', () => {
                 create: jest.fn(),
                 findAll: jest.fn(),
                 findByPk: jest.fn(),
+                update: jest.fn(),
             }
         }
     };
@@ -28,6 +29,13 @@ beforeAll(async () => {
     db.models.todo.findAll.mockResolvedValue(mockTodos);
     db.models.todo.findByPk.mockImplementation(id => {
         return Promise.resolve(mockTodos.find(todo => todo.id === id));
+    });
+    db.models.todo.update.mockImplementation((values, options) => {
+        const todo = mockTodos.find(todo => todo.id === options.where.id);
+        if (todo) {
+            return Promise.resolve([1, [{ ...todo, ...values }]]);
+        }
+        return Promise.resolve([0, []]);
     });
 });
 
@@ -122,6 +130,44 @@ describe('Todos API', () => {
         const res = await request(app).post('/todos').send({});
         expect(res.statusCode).toEqual(400);
         expect(res.body.errors[0].msg).toBe('Invalid value');
+    });
+
+    ////////////////////////////////////////////////////////////////////////
+    //////////// PUT Tests /////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+
+    test('PUT /todos/:id/done should mark a todo as done', async () => {
+        const todo = { id: 1, name: 'Initial Task 1', done: false };
+        db.models.todo.findByPk.mockResolvedValueOnce(todo);
+        const res = await request(app).put('/todos/1/done');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.done).toBe(true);
+    });
+
+    test('PUT /todos/:id/done should return 404 if todo is not found', async () => {
+        db.models.todo.findByPk.mockResolvedValueOnce(null);
+        const res = await request(app).put('/todos/999/done');
+        expect(res.statusCode).toEqual(404);
+        expect(res.text).toBe('Todo not found');
+    });
+
+    ////////////////////////////////////////////////////////////////////////
+    //////////// DELETE Tests //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+
+    test('DELETE /todos/:id/done should mark a todo as not done', async () => {
+        const todo = { id: 2, name: 'Initial Task 2', done: true };
+        db.models.todo.findByPk.mockResolvedValueOnce(todo);
+        const res = await request(app).delete('/todos/2/done');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.done).toBe(false);
+    });
+
+    test('DELETE /todos/:id/done should return 404 if todo is not found', async () => {
+        db.models.todo.findByPk.mockResolvedValueOnce(null);
+        const res = await request(app).delete('/todos/999/done');
+        expect(res.statusCode).toEqual(404);
+        expect(res.text).toBe('Todo not found');
     });
 
     ////////////////////////////////////////////////////////////////////////
