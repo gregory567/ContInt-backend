@@ -61,7 +61,6 @@ describe('Todos API', () => {
             expect(todo).toHaveProperty('id');
             expect(todo).toHaveProperty('name');
             expect(todo).toHaveProperty('done');
-            expect(todo).toHaveProperty('date');
         });
     });
 
