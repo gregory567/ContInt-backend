@@ -74,19 +74,18 @@ const posthog = new PostHog(
   { host: 'https://eu.i.posthog.com' }
 );
 
-// Helper function to extract distinctId from cookies
-function getDistinctIdFromCookies(req) {
-    console.log("All cookies:", req.cookies);
+// Helper function to extract distinctId from request header
+function getDistinctIdFromReqHeader(req) {
     try {
-        const cookies = req.cookies[`ph_phc_xC1fBU65c02AaFCisiKximyPseHTHIUGSRwtQayUXs0_posthog`];
-        console.log("cookies:", cookies);
-        if (cookies) {
-            console.log("inside getDistinctIdFromCookies if statement");
-            const distinctId = JSON.parse(cookies)['distinct_id'];
+        const distinctId = req.headers['x-session-id'];
+        console.log("distinct_id:", distinctId);
+        if (distinctId) {
+            console.log("inside getDistinctIdFromReqHeader if statement");
+        
             return distinctId;
         }
     } catch (error) {
-        console.error('Error parsing cookies:', error);
+        console.error('Error parsing reqHeader:', error);
     }
     return null;
 }
@@ -120,7 +119,7 @@ router.get('/', async (req, res, next) => {
     
     try {
         const todos = await db.models.todo.findAll();
-        const distinctId = getDistinctIdFromCookies(req);
+        const distinctId = getDistinctIdFromReqHeader(req);
         if (distinctId) {
             const sortedTodos = await processTodos(todos, distinctId);
             return res.status(200).json(sortedTodos);
@@ -150,7 +149,7 @@ router.post('/',
                 date: new Date()
             });
 
-            const distinctId = getDistinctIdFromCookies(req);
+            const distinctId = getDistinctIdFromReqHeader(req);
             if (distinctId) {
                 const isFeatureEnabled = await posthog.isFeatureEnabled('move-unfinished-todos', distinctId);
                 if (isFeatureEnabled) {
