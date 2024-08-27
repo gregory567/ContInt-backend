@@ -74,14 +74,6 @@ describe('Todos API', () => {
     });
     */
 
-    test('PUT /todos/:id/done should return 404 for a non-existent todo', async () => {
-        db.models.todo.findByPk.mockResolvedValueOnce(null);
-        const res = await request(app)
-            .put('/todos/999/done');
-        expect(res.statusCode).toEqual(404);
-        expect(res.text).toBe('Todo not found');
-    });
-
     /*
     test('DELETE /todos/:id/done should mark a todo as not done', async () => {
         const todo = { id: 1, name: 'Initial Task 1', done: true };
@@ -94,6 +86,18 @@ describe('Todos API', () => {
     });
     */
 
+    ///////////////////////////////////////////////////////////////////
+    //////////// invalid ID ///////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////
+
+    test('PUT /todos/:id/done should return 404 for a non-existent todo', async () => {
+        db.models.todo.findByPk.mockResolvedValueOnce(null);
+        const res = await request(app)
+            .put('/todos/999/done');
+        expect(res.statusCode).toEqual(404);
+        expect(res.text).toBe('Todo not found');
+    });
+
     test('PUT /todos/:id/done should return 404 for an invalid ID', async () => {
         const res = await request(app).put('/todos/invalid/done');
         expect(res.statusCode).toEqual(404);
@@ -105,6 +109,10 @@ describe('Todos API', () => {
         expect(res.statusCode).toEqual(404);
         expect(res.text).toBe('Todo not found');
     });
+
+    ////////////////////////////////////////////////////////////////////////
+    //////////// bad TODO naming ///////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
     
     test('POST /todos should return 400 for a name exceeding max length', async () => {
         const longName = 'A'.repeat(256); // 256 characters long
@@ -117,7 +125,30 @@ describe('Todos API', () => {
         const res = await request(app).post('/todos').send({});
         expect(res.statusCode).toEqual(400);
         expect(res.body.errors[0].msg).toBe('Invalid value');
+    }); 
+
+
+    ////////////////////////////////////////////////////////////////////////
+    //////////// error code 500 ////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    
+    test('GET /todos should return 500 if an error occurs while fetching todos', async () => {
+        db.models.todo.findAll.mockRejectedValueOnce(new Error('Database error'));
+        const res = await request(app).get('/todos');
+        expect(res.statusCode).toEqual(500);
+        expect(res.text).toContain('Database error');
+    });
+    
+    test('POST /todos should return 500 if an error occurs while creating a todo', async () => {
+        db.models.todo.create.mockRejectedValueOnce(new Error('Database error'));
+        const res = await request(app).post('/todos').send({ name: 'New Task' });
+        expect(res.statusCode).toEqual(500);
+        expect(res.text).toContain('Database error');
     });    
+
+    ////////////////////////////////////////////////////////////////////////
+    //////////// DB connection /////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
 
     test('Database connection should be established', async () => {
         await expect(db.authenticate()).resolves.not.toThrow();
