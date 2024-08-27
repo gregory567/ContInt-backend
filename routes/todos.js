@@ -93,8 +93,8 @@ function getDistinctIdFromCookies(req) {
 
 // Helper function to handle todos sorting and date updating
 async function processTodos(todos, distinctId) {
-    const isFeatureEnabled = await posthog.isFeatureEnabled('move-unfinished-todos', distinctId);
-    if (isFeatureEnabled) {
+    //const isFeatureEnabled = await posthog.isFeatureEnabled('move-unfinished-todos', distinctId);
+    //if (isFeatureEnabled) {
         console.log("inside processTodos if statement");
         return todos
             .sort((a, b) => {
@@ -108,7 +108,7 @@ async function processTodos(todos, distinctId) {
                 }
                 return todo;
             });
-    }
+    //}
     return todos;
 }
 
