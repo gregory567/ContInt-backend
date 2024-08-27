@@ -93,6 +93,7 @@ function getDistinctIdFromCookies(req) {
 
 // Helper function to handle todos sorting and date updating
 async function processTodos(todos, distinctId) {
+    console.log("inside processTodos function");
     const isFeatureEnabled = await posthog.isFeatureEnabled('move-unfinished-todos', distinctId);
     if (isFeatureEnabled) {
         console.log("inside processTodos if statement");
@@ -124,6 +125,7 @@ router.get('/', async (req, res, next) => {
             const sortedTodos = await processTodos(todos, distinctId);
             return res.status(200).json(sortedTodos);
         } else {
+            console.log("inside get route but no distinct id");
             return res.status(200).json(todos);
         }
     } catch (error) {
