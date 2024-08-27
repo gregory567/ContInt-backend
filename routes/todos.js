@@ -78,10 +78,10 @@ const posthog = new PostHog(
 function getDistinctIdFromCookies(req) {
     console.log("All cookies:", req.cookies);
     try {
-        const cookies = req.cookies['ph_phc_xC1fBU65c02AaFCisiKximyPseHTHIUGSRwtQayUXs0_posthog'];
+        const cookies = req.cookies[`ph_phc_xC1fBU65c02AaFCisiKximyPseHTHIUGSRwtQayUXs0_posthog`];
         console.log("cookies:", cookies);
         if (cookies) {
-             console.log("inside getDistinctIdFromCookies if statement");
+            console.log("inside getDistinctIdFromCookies if statement");
             const distinctId = JSON.parse(cookies)['distinct_id'];
             return distinctId;
         }
