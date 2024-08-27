@@ -41,7 +41,7 @@ jobs:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_DIALECT: ${{ secrets.DB_DIALECT }}
           DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PW }}
+          DB_PW: ${{ secrets.DB_PW }}
           DB_NAME: ${{ secrets.DB_NAME }}
         run: npm test --if-present
 
