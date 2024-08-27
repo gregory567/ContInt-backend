@@ -97,13 +97,13 @@ describe('Todos API', () => {
     test('PUT /todos/:id/done should return 404 for an invalid ID', async () => {
         const res = await request(app).put('/todos/invalid/done');
         expect(res.statusCode).toEqual(404);
-        expect(res.text).toBe('Invalid ID');
+        expect(res.text).toBe('Todo not found');
     });
     
     test('DELETE /todos/:id/done should return 404 for an invalid ID', async () => {
         const res = await request(app).delete('/todos/invalid/done');
         expect(res.statusCode).toEqual(404);
-        expect(res.text).toBe('Invalid ID');
+        expect(res.text).toBe('Todo not found');
     });
     
     test('POST /todos should return 400 for a name exceeding max length', async () => {
