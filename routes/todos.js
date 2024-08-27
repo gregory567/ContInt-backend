@@ -108,6 +108,8 @@ async function processTodos(todos, distinctId) {
                 }
                 return todo;
             });
+    } else {
+        console.log("feature flag not enabled");
     }
     return todos;
 }
