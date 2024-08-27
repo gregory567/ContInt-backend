@@ -63,8 +63,9 @@ describe('Todos API', () => {
     });
 
     test('PUT /todos/:id/done should mark a todo as done', async () => {
-        const todo = { id: 1, name: 'Initial Task 1', done: true };
+        const todo = { id: 1, name: 'Initial Task 1', done: false };
         db.models.todo.findByPk.mockResolvedValueOnce(todo);
+        todo.done = true;
         const res = await request(app)
             .put('/todos/1/done');
         expect(res.statusCode).toEqual(200);
@@ -80,8 +81,9 @@ describe('Todos API', () => {
     });
 
     test('DELETE /todos/:id/done should mark a todo as not done', async () => {
-        const todo = { id: 1, name: 'Initial Task 1', done: false };
+        const todo = { id: 1, name: 'Initial Task 1', done: true };
         db.models.todo.findByPk.mockResolvedValueOnce(todo);
+        todo.done = false;
         const res = await request(app)
             .delete('/todos/1/done');
         expect(res.statusCode).toEqual(200);
