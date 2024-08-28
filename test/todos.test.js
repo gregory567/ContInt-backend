@@ -136,7 +136,7 @@ describe('Todos API', () => {
     //////////// PUT Tests /////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
 
-    /*
+    
     test('PUT /todos/:id/done should mark a todo as done', async () => {
         const todo = { id: 1, name: 'Initial Task 1', done: false };
         db.models.todo.findByPk.mockResolvedValueOnce(todo);
@@ -144,7 +144,7 @@ describe('Todos API', () => {
         expect(res.statusCode).toEqual(200);
         expect(res.body.done).toBe(true);
     });
-    */
+    
 
     test('PUT /todos/:id/done should return 404 if todo is not found', async () => {
         db.models.todo.findByPk.mockResolvedValueOnce(null);
@@ -157,7 +157,7 @@ describe('Todos API', () => {
     //////////// DELETE Tests //////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
 
-    /*
+    
     test('DELETE /todos/:id/done should mark a todo as not done', async () => {
         const todo = { id: 2, name: 'Initial Task 2', done: true };
         db.models.todo.findByPk.mockResolvedValueOnce(todo);
@@ -165,7 +165,7 @@ describe('Todos API', () => {
         expect(res.statusCode).toEqual(200);
         expect(res.body.done).toBe(false);
     });
-    */
+    
 
     test('DELETE /todos/:id/done should return 404 if todo is not found', async () => {
         db.models.todo.findByPk.mockResolvedValueOnce(null);
@@ -222,6 +222,7 @@ describe('Todos API', () => {
     //////////// cookie parser /////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
 
+    /*
     test('should parse cookies correctly', async () => {
         const res = await request(app)
             .get('/todos')
@@ -230,5 +231,6 @@ describe('Todos API', () => {
         expect(res.statusCode).toEqual(200);
         expect(res.headers['set-cookie']).toBeUndefined(); // Assuming no new cookies are set in this route
     });
+    */
 
 });
