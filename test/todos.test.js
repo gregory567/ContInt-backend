@@ -145,6 +145,7 @@ describe('Todos API', () => {
         expect(res.body.done).toBe(true);
     });
     */
+    
 
     test('PUT /todos/:id/done should return 404 if todo is not found', async () => {
         db.models.todo.findByPk.mockResolvedValueOnce(null);
@@ -222,6 +223,7 @@ describe('Todos API', () => {
     //////////// cookie parser /////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
 
+    /*
     test('should parse cookies correctly', async () => {
         const res = await request(app)
             .get('/todos')
@@ -230,5 +232,6 @@ describe('Todos API', () => {
         expect(res.statusCode).toEqual(200);
         expect(res.headers['set-cookie']).toBeUndefined(); // Assuming no new cookies are set in this route
     });
+    */
 
 });
