@@ -15,7 +15,8 @@ const posthog = new PostHog(
 
 var app = express();
 app.use(cors({
-  origin: ['http://44.219.67.143', 'http://10.0.1.20', 'http://44.219.67.143:8081', 'http://44.219.67.143:8082'],
+ // origin: ['http://44.219.67.143:80', 'http://10.0.1.20', 'http://44.219.67.143:8081', 'http://44.219.67.143:8082'],
+ origin: ['*'],
   credentials: true
 }));
 

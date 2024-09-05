@@ -19,7 +19,7 @@ function getDistinctIdFromReqHeader(req) {
             return distinctId;
         }
     } catch (error) {
-        console.error('Error parsing reqHeader:', error);
+        console.error('Error parsing reqHeader :', error);
     }
     return null;
 }
