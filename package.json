@@ -22,7 +22,7 @@
     "posthog-node": "^4.1.0",
     "pug": "^3.0.3",
     "semver": "^7.5.2",
-    "sequelize": "^6.29.0",
+    "sequelize": "^6.37.3",
     "uglify-js": "^3.19.2"
   },
   "devDependencies": {
